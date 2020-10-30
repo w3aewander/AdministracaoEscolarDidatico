@@ -29,14 +29,17 @@ public class FrmAlunos extends javax.swing.JInternalFrame {
     }
     
     public void popularCursos(){
-        DefaultComboBoxModel dm =  (DefaultComboBoxModel) cboCursos.getModel();
+        //DefaultComboBoxModel dm =  (DefaultComboBoxModel) cboCursos.getModel();
+        DefaultComboBoxModel dm = new DefaultComboBoxModel();
+ 
         dm.removeAllElements();
         CursoDAO cursoDAO = new CursoDAO();
         
         cursoDAO.listar().forEach( (c) -> {
              dm.addElement(c.getId() + "-" + c.getNome());
             
-        });
+        });     
+        cboCursos.setModel(dm);
     }
     
     public void popularAlunos(){
@@ -50,7 +53,7 @@ public class FrmAlunos extends javax.swing.JInternalFrame {
         
         AlunoDAO alunoDAO = new AlunoDAO();
         
-        alunoDAO.listar().forEach( (Aluno a)->{
+        alunoDAO.listar().forEach( (a)->{
           CursoDAO cursoDAO = new CursoDAO();
           
           Curso curso = new Curso();
@@ -242,6 +245,7 @@ public class FrmAlunos extends javax.swing.JInternalFrame {
         
         txtId.setText( tblAlunos.getModel().getValueAt(linha, 0).toString()  );
         txtNome.setText( tblAlunos.getModel().getValueAt(linha, 1).toString()  );
+        
         cboCursos.setSelectedItem(tblAlunos.getModel().getValueAt(linha, 2)   );
     }//GEN-LAST:event_tblAlunosMouseClicked
 

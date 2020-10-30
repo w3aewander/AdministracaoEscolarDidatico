@@ -6,7 +6,9 @@
 package view;
 
 import controller.DisciplinaDAO;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import model.Disciplina;
 
 /**
  *
@@ -22,6 +24,15 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
         popularDisciplinas();
     }
 
+    public void editarDisciplina(){
+       int row = tblDisciplinas.getSelectedRow();
+       
+       String id = tblDisciplinas.getModel().getValueAt(row, 0).toString();
+       String nome = tblDisciplinas.getModel().getValueAt(row, 1).toString();
+       
+       txtId.setText(id);
+       txtNome.setText(nome);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -34,7 +45,7 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        txtId = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDisciplinas = new javax.swing.JTable();
@@ -51,8 +62,11 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
 
         jLabel1.setText("ID");
 
-        jTextField2.setText("0");
-        jTextField2.setEnabled(false);
+        txtNome.setName("txtNome"); // NOI18N
+
+        txtId.setText("0");
+        txtId.setEnabled(false);
+        txtId.setName("txtId"); // NOI18N
 
         jLabel2.setText("NOME");
 
@@ -66,7 +80,7 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
                     .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -75,7 +89,7 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -95,9 +109,19 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
             }
         ));
         tblDisciplinas.setName("tblDisciplinas"); // NOI18N
+        tblDisciplinas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDisciplinasMouseClicked(evt);
+            }
+        });
+        tblDisciplinas.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tblDisciplinasKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblDisciplinas);
 
-        btnNovo.setText("NOME");
+        btnNovo.setText("NOVO");
         btnNovo.setName("btnNovo"); // NOI18N
         btnNovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -107,9 +131,19 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
 
         btnSalvar.setText("SALVAR");
         btnSalvar.setName("btnSalvar"); // NOI18N
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         btnExcluir.setText("EXCLUIR");
         btnExcluir.setName("btnExcluir"); // NOI18N
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
         btnPesquisar.setText("PESQUISAR");
         btnPesquisar.setName("btnPesquisar"); // NOI18N
@@ -157,12 +191,60 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
         // TODO add your handling code here:
+        txtId.setText("0");
+        txtNome.setText("");
+        
+        txtNome.setFocusable(true);
+      
     }//GEN-LAST:event_btnNovoActionPerformed
 
+    private void tblDisciplinasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDisciplinasMouseClicked
+        // TODO add your handling code here:
+        this.editarDisciplina();
+    }//GEN-LAST:event_tblDisciplinasMouseClicked
+
+    private void tblDisciplinasKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblDisciplinasKeyReleased
+        // TODO add your handling code here:
+        this.editarDisciplina();
+    }//GEN-LAST:event_tblDisciplinasKeyReleased
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // TODO add your handling code here:
+        int id = Integer.parseInt( txtId.getText() );
+        String nome = txtNome.getText();
+        
+        Disciplina disciplina = new Disciplina();
+        disciplina.setId(id);
+        disciplina.setNome(nome);
+        
+        if ( id == 0) {
+            new DisciplinaDAO().incluir(disciplina);
+            
+        } else {
+            new DisciplinaDAO().atualizar(disciplina);
+        }
+        
+        popularDisciplinas();
+        btnNovo.doClick();
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        // TODO add your handling code here:
+        int id = Integer.parseInt( txtId.getText() );
+        Disciplina disciplina = new Disciplina();
+        disciplina.setId(id);
+        if ( new DisciplinaDAO().excluir(disciplina) ){
+            JOptionPane.showMessageDialog(null, "Disciplina excluída com sucesso.");
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro ao tentar excluir disciplina.");
+        }
+        
+        popularDisciplinas();
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
     public void popularDisciplinas(){
-      
-  
-      
+
+     
       DefaultTableModel dtm = (DefaultTableModel) tblDisciplinas.getModel();
       dtm.setNumRows(0);
       dtm.setColumnCount(0);
@@ -188,8 +270,8 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTable tblDisciplinas;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 }

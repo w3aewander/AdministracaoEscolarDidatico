@@ -8,6 +8,7 @@ package controller;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +29,7 @@ public class DisciplinaDAO extends Conexao implements ICRUD<Disciplina> {
         boolean incluiu = false;
         try {
             String sql = " insert into disciplinas ( disciplina_nome ) ";
-            sql += " values ( ?, ? ) ";
+            sql += " values ( ? ) ";
             pstm = this.conectar().prepareStatement(sql);
             pstm.setString( 1,obj.getNome() );
             
@@ -106,7 +107,7 @@ public class DisciplinaDAO extends Conexao implements ICRUD<Disciplina> {
             pstm = this.conectar().prepareStatement(sql);
             pstm.setInt(1, obj.getId());
             
-            excluiu = pstm.execute();
+            excluiu = pstm.executeUpdate() > 0;
             
             pstm.close();
             
@@ -119,7 +120,7 @@ public class DisciplinaDAO extends Conexao implements ICRUD<Disciplina> {
 
     @Override
     public List<Disciplina> listar() {
-        List<Disciplina> lista = null;
+        List<Disciplina> lista = new ArrayList<Disciplina>();
         
         try {
             

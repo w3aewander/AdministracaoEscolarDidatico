@@ -38,8 +38,7 @@ public class CursoDAO extends Conexao implements ICRUD<Curso> {
             pstm.setInt(2, obj.getCargaHoraria());
             
             incluiu =  pstm.executeUpdate() > 0;  
-           
-            
+
             pstm.close();
             
         } catch (SQLException ex) {
@@ -90,7 +89,7 @@ public class CursoDAO extends Conexao implements ICRUD<Curso> {
             pstm.setInt(2,obj.getCargaHoraria());
             pstm.setInt(3,obj.getId());
             
-            atualizou = pstm.execute();
+            atualizou = pstm.executeUpdate() > 0;
             pstm.close();
             
         } catch (SQLException ex) {
