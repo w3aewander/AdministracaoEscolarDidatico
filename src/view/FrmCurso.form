@@ -188,6 +188,7 @@
         <Component class="javax.swing.JTextField" name="txtId">
           <Properties>
             <Property name="toolTipText" type="java.lang.String" value="ID do curso..."/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="name" type="java.lang.String" value="txtId" noResource="true"/>
           </Properties>
         </Component>

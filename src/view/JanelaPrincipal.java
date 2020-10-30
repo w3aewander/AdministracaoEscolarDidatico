@@ -155,7 +155,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
-        FrmAlunos frmDisciplina = new FrmAlunos();
+        FrmDisciplinas frmDisciplina = new FrmDisciplinas();
         frmDisciplina.setVisible(true);
         this.jDesktopPane1.add(frmDisciplina);
     }//GEN-LAST:event_jMenuItem4ActionPerformed

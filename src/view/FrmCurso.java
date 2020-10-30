@@ -136,6 +136,7 @@ public class FrmCurso extends javax.swing.JInternalFrame {
         jLabel1.setText("ID");
 
         txtId.setToolTipText("ID do curso...");
+        txtId.setEnabled(false);
         txtId.setName("txtId"); // NOI18N
 
         jLabel2.setText("Nome do Curso");
@@ -257,9 +258,8 @@ public class FrmCurso extends javax.swing.JInternalFrame {
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
         // TODO add your handling code here:
-        txtId.setText("");
-        txtNome.setText("");
         txtId.setText("0");
+        txtNome.setText("");
         txtCargaHoraria.setText("0");
     
     }//GEN-LAST:event_btnNovoActionPerformed
@@ -267,20 +267,61 @@ public class FrmCurso extends javax.swing.JInternalFrame {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         // TODO add your handling code here:
          CursoDAO cursoDAO = new CursoDAO();
+         
          Curso curso = new Curso();
-         curso.setId(0);
+         curso.setId( Integer.parseInt(txtId.getText()));
          curso.setNome(txtNome.getText());
          curso.setCargaHoraria( Integer.parseInt(txtCargaHoraria.getText() ) );
          //curso.setCargaHoraria(ERROR);
-         boolean incluiu = cursoDAO.incluir(curso);
-         if ( incluiu ){
-             JOptionPane.showMessageDialog(null, "Curso Incluído com sucesso.");
-             popularCursos();
-         } else {
-             JOptionPane.showMessageDialog(null, "Erro ao tentar incluir o curso.");
-         }
+         
+//         if ( txtId.getText().equals("0")){
+//             incluir(curso);
+//         } else {
+//            atualizar(curso);
+//         }
+
+        if ( txtId.getText().equals("0")){
+             boolean incluiu = cursoDAO.incluir(curso);
+                  if ( incluiu ){
+                      JOptionPane.showMessageDialog(null, "Curso Incluído com sucesso.");
+                      popularCursos();
+                  } else {
+                      JOptionPane.showMessageDialog(null, "Erro ao tentar incluir o curso.");
+                  }   
+        } else {        
+            boolean atualizou = cursoDAO.atualizar(curso);
+                  if ( atualizou ){
+                      JOptionPane.showMessageDialog(null, "Curso atualizado com sucesso.");
+                      popularCursos();
+                  } else {
+                      JOptionPane.showMessageDialog(null, "Erro ao tentar atualizar o curso.");
+                  }
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
+    public void incluir(Curso curso){
+        CursoDAO cursoDAO = new CursoDAO();
+          
+        boolean incluiu = cursoDAO.incluir(curso);
+            if ( incluiu ){
+                JOptionPane.showMessageDialog(null, "Curso Incluído com sucesso.");
+                popularCursos();
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao tentar incluir o curso.");
+            }   
+    }
+    
+    public void atualizar(Curso curso){
+      CursoDAO cursoDAO = new CursoDAO();
+      
+      boolean atualizou = cursoDAO.atualizar(curso);
+            if ( atualizou ){
+                JOptionPane.showMessageDialog(null, "Curso atualizado com sucesso.");
+                popularCursos();
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao tentar atualizar o curso.");
+            }
+    }
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         // TODO add your handling code here:
          CursoDAO cursoDAO = new CursoDAO();
