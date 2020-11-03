@@ -15,6 +15,7 @@ public class Professor {
     
     private int id;
     private String nome;
+    private String disponibilidade;
     private List<Disciplina> disciplinas;
 
     public int getId() {
@@ -25,6 +26,7 @@ public class Professor {
         this.id = id;
     }
 
+    
     public String getNome() {
         return nome;
     }
@@ -39,5 +41,13 @@ public class Professor {
 
     public void setDisciplinas(List<Disciplina> disciplinas) {
         this.disciplinas = disciplinas;
+    }
+
+    public String getDisponibilidade() {
+        return disponibilidade;
+    }
+
+    public void setDisponibilidade(String disponibilidade) {
+        this.disponibilidade = disponibilidade;
     }
 }

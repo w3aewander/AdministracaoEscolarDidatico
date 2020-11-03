@@ -28,7 +28,7 @@ public class DisciplinaDAO extends Conexao implements ICRUD<Disciplina> {
     public boolean incluir(Disciplina obj) {
         boolean incluiu = false;
         try {
-            String sql = " insert into disciplinas ( disciplina_nome ) ";
+            String sql = " insert into disciplinas ( nome ) ";
             sql += " values ( ? ) ";
             pstm = this.conectar().prepareStatement(sql);
             pstm.setString( 1,obj.getNome() );
@@ -79,12 +79,13 @@ public class DisciplinaDAO extends Conexao implements ICRUD<Disciplina> {
         
         try {
             
-            String sql = "update disciplinas set disciplina_nome = ? where disciplina_id ?";
-            
+            String sql = "update disciplinas set disciplina_nome = ? where disciplina_id = ?";
+           
             pstm = this.conectar().prepareStatement(sql);
-            pstm.setInt(1, obj.getId());
+            pstm.setString(1,obj.getNome());
+            pstm.setInt(2, obj.getId());
             
-            atualizou = pstm.execute();
+            atualizou = pstm.executeUpdate() > 0;
             
             pstm.close();
 

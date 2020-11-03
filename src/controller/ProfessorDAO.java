@@ -32,11 +32,12 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
         
         try {
             
-            String sql = "insert into professores (  professor_nome  ) ";
-            sql += " values( ? )";
+            String sql = "insert into professores (  professor_nome~, professor_disponibilidade  ) ";
+            sql += " values( ?, ? )";
             
             pstm = this.conectar().prepareStatement(sql);
             pstm.setString(1, obj.getNome());
+            pstm.setString(2, obj.getDisponibilidade());
            
             incluiuProfessor = pstm.execute();
             
@@ -110,10 +111,11 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
         
         try {
             
-            String sql = "update professores set professor_nome = ? where professor_id = ?";
+            String sql = "update professores set professor_nome = ?, professor_disponibilidade, where professor_id = ?";
             pstm = this.conectar().prepareStatement(sql);
             pstm.setString(1, obj.getNome());
-            pstm.setInt(2, obj.getId());
+            pstm.setString(2, obj.getDisponibilidade());
+            pstm.setInt(3, obj.getId());
             
             atualizou = pstm.execute();
             
@@ -141,7 +143,7 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
     @Override
     public List<Professor> listar() {
     
-    List<Professor> professores = null;
+    List<Professor> professores = new ArrayList<Professor>();
     Professor professor = new Professor();
     
         try {

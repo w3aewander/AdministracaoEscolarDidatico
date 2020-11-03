@@ -37,7 +37,7 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         mnuCursos = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
+        mnuProfessores = new javax.swing.JMenuItem();
         mnuAlunos = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItem7 = new javax.swing.JMenuItem();
@@ -83,8 +83,14 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         });
         mnuSair.add(jMenuItem4);
 
-        jMenuItem5.setText("Professores");
-        mnuSair.add(jMenuItem5);
+        mnuProfessores.setText("Professores");
+        mnuProfessores.setName("mnuProfessores"); // NOI18N
+        mnuProfessores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuProfessoresActionPerformed(evt);
+            }
+        });
+        mnuSair.add(mnuProfessores);
 
         mnuAlunos.setText("Alunos");
         mnuAlunos.addActionListener(new java.awt.event.ActionListener() {
@@ -167,6 +173,13 @@ public class JanelaPrincipal extends javax.swing.JFrame {
         jDesktopPane1.add(frmAlunos);
     }//GEN-LAST:event_mnuAlunosActionPerformed
 
+    private void mnuProfessoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuProfessoresActionPerformed
+        // TODO add your handling code here:
+        FrmProfessores frmProfessores = new FrmProfessores();
+        frmProfessores.setVisible(true);
+        jDesktopPane1.add(frmProfessores);
+    }//GEN-LAST:event_mnuProfessoresActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -210,12 +223,12 @@ public class JanelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenuItem mnuAlunos;
     private javax.swing.JMenuItem mnuCursos;
+    private javax.swing.JMenuItem mnuProfessores;
     private javax.swing.JMenu mnuSair;
     // End of variables declaration//GEN-END:variables
 }

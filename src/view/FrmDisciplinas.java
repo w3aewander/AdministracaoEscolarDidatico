@@ -217,12 +217,35 @@ public class FrmDisciplinas extends javax.swing.JInternalFrame {
         disciplina.setId(id);
         disciplina.setNome(nome);
         
-        if ( id == 0) {
-            new DisciplinaDAO().incluir(disciplina);
+        if( JOptionPane.showConfirmDialog(
+                                         null, 
+                                         "Confirma atualizar ou incluir nova disciplina ?", 
+                                         "Confirmação",                                                                                   
+                                         JOptionPane.YES_NO_OPTION,
+                                         JOptionPane.QUESTION_MESSAGE) == 0){
+            if ( id == 0) {
+                if ( new DisciplinaDAO().incluir(disciplina) ){
+                     JOptionPane.showMessageDialog(null, "Disciplina incluída com sucesso.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Erro ao tentar incluir a disciplina.");
+                }
+
+            } else {
+                if ( new DisciplinaDAO().atualizar(disciplina) ){
+                    JOptionPane.showMessageDialog(null, "Disciplina atualizada com sucesso.");
+                } else {
+                   JOptionPane.showMessageDialog(null, "Erro ao tentar atualizar a disciplina."); 
+                }
+            }  
             
+                   
         } else {
-            new DisciplinaDAO().atualizar(disciplina);
+            
+            JOptionPane.showMessageDialog(null, "Operação de inclusão ou atualização cancelada.");
         }
+      
+        
+        
         
         popularDisciplinas();
         btnNovo.doClick();
