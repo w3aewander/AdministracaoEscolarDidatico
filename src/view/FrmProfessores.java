@@ -5,8 +5,16 @@
  */
 package view;
 
+import controller.DisciplinaDAO;
 import controller.ProfessorDAO;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import model.Disciplina;
+import model.Professor;
 
 /**
  *
@@ -20,9 +28,29 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
     public FrmProfessores() {
         initComponents();
         popularProfessores();
-        
+        popularDisciplinas();
+        limparListaDisciplinas();
     }
 
+    private void limparListaDisciplinas(){
+        DefaultListModel dlm = new DefaultListModel();
+        dlm.clear();
+        lstDisciplinas.setModel(dlm);
+    }
+    private void popularDisciplinas(){
+        DefaultComboBoxModel dcm = (DefaultComboBoxModel) cboDisciplinas.getModel();
+        
+        dcm.removeAllElements();
+        
+        //DisciplinaDAO disciplinaDAO = new DisciplinaDAO();
+        new DisciplinaDAO().listar().forEach( (d)-> {
+              String id = String.valueOf( d.getId());
+              String nome =  d.getNome() ;
+              
+              dcm.addElement( id+"-"+nome   );
+        });
+        
+    }
     private void popularProfessores(){
         ProfessorDAO professorDAO = new ProfessorDAO();
         //Cria um modelo de dados para a tabela professores
@@ -74,11 +102,14 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
         btnExcluir = new javax.swing.JButton();
         btnPesquisar = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        txtDsiponibilidade = new javax.swing.JTextArea();
+        txtDisponibilidade = new javax.swing.JTextArea();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblProfessores = new javax.swing.JTable();
 
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
         setTitle("Cadastro de Professores");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -104,26 +135,51 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
             public String getElementAt(int i) { return strings[i]; }
         });
         lstDisciplinas.setName("lstDisciplinas"); // NOI18N
+        lstDisciplinas.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                lstDisciplinasFocusGained(evt);
+            }
+        });
         jScrollPane1.setViewportView(lstDisciplinas);
 
         btnIncluirDisciplina.setText("Incluir");
         btnIncluirDisciplina.setName("btnInbcluirDisciplina"); // NOI18N
+        btnIncluirDisciplina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIncluirDisciplinaActionPerformed(evt);
+            }
+        });
 
         btnRemoverDisciplina.setText("Remover");
         btnRemoverDisciplina.setName("btnRemoverDisciplina"); // NOI18N
+        btnRemoverDisciplina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverDisciplinaActionPerformed(evt);
+            }
+        });
 
         btnNovo.setText("Novo");
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoActionPerformed(evt);
+            }
+        });
 
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         btnExcluir.setText("Excluir");
 
         btnPesquisar.setText("Pesquisar");
 
-        txtDsiponibilidade.setColumns(20);
-        txtDsiponibilidade.setRows(5);
-        txtDsiponibilidade.setName("txtDisponibilidade"); // NOI18N
-        jScrollPane3.setViewportView(txtDsiponibilidade);
+        txtDisponibilidade.setColumns(20);
+        txtDisponibilidade.setRows(5);
+        txtDisponibilidade.setName("txtDisponibilidade"); // NOI18N
+        jScrollPane3.setViewportView(txtDisponibilidade);
 
         jLabel5.setText("Disponibilidade");
 
@@ -165,7 +221,7 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,10 +264,12 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(11, 11, 11)
                                 .addComponent(btnPesquisar)))))
-                .addGap(35, 35, 35))
+                .addGap(23, 23, 23))
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnIncluirDisciplina, btnRemoverDisciplina});
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnExcluir, btnNovo, btnPesquisar, btnSalvar});
 
         tblProfessores.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -235,20 +293,93 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 463, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addComponent(jScrollPane2)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
-                .addGap(13, 13, 13))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
+        // TODO add your handling code here:
+        txtId.setText("0"); 
+        txtNome.setText("");
+        
+        limparListaDisciplinas();
+        
+        txtDisponibilidade.setText("");
+    }//GEN-LAST:event_btnNovoActionPerformed
+
+    private void lstDisciplinasFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lstDisciplinasFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lstDisciplinasFocusGained
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        
+        List<Disciplina> disciplinas = new ArrayList<Disciplina>();
+        Professor professor = new Professor();
+          
+        if ( txtId.getText().equals("0")){
+            
+          Disciplina disciplina = new Disciplina();
+          
+          DefaultListModel dlm =  (DefaultListModel) lstDisciplinas.getModel();
+          int qtdeDisciplinas = dlm.getSize();
+          
+          for(int i=0;i < qtdeDisciplinas; i++){
+              //pega as linha da lista de disciplinas
+              String  linha = dlm.getElementAt(i).toString();
+              
+              //Divide a linha usando o delimitador "-" para
+              //obter o id e nome da disciplina
+              String id = linha.split("-")[0] ;
+              String nome = linha.split("-")[1];
+              
+              //setar o id e nome para criar o objeto disciplina
+              disciplina.setId( Integer.parseInt(id) );
+              disciplina.setNome(nome);
+              
+              //incluir a disciplina na lista
+              disciplinas.add(disciplina);
+             
+          }  
+          professor.setNome(txtNome.getText());
+          
+          
+          if ( new ProfessorDAO().incluir(professor) ){
+               new ProfessorDAO().incluirDisciplina(professor.getId(), disciplinas);
+              JOptionPane.showMessageDialog(null,"Professor incluido com sucesso");
+          } else {
+               JOptionPane.showMessageDialog(null,"Erro ao tentar incluir o professor.");
+          }
+        
+        }else{
+            //atualizar
+        }
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnIncluirDisciplinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIncluirDisciplinaActionPerformed
+        // TODO add your handling code here:
+        DefaultListModel dlm = (DefaultListModel) lstDisciplinas.getModel();
+        dlm.addElement( cboDisciplinas.getModel().getSelectedItem().toString()) ;
+    }//GEN-LAST:event_btnIncluirDisciplinaActionPerformed
+
+    private void btnRemoverDisciplinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverDisciplinaActionPerformed
+        // TODO add your handling code here:
+        DefaultListModel dlm = (DefaultListModel) lstDisciplinas.getModel();
+        int indice = lstDisciplinas.getSelectedIndex();
+        dlm.remove(indice);
+ 
+       //dlm.Element( cboDisciplinas.getModel().getSelectedItem().toString()) ;        
+    }//GEN-LAST:event_btnRemoverDisciplinaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -270,7 +401,7 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JList<String> lstDisciplinas;
     private javax.swing.JTable tblProfessores;
-    private javax.swing.JTextArea txtDsiponibilidade;
+    private javax.swing.JTextArea txtDisponibilidade;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables

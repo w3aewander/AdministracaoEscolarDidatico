@@ -32,14 +32,14 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
         
         try {
             
-            String sql = "insert into professores (  professor_nome~, professor_disponibilidade  ) ";
+            String sql = "insert into professores (  professor_nome, professor_disponibilidade  ) ";
             sql += " values( ?, ? )";
             
             pstm = this.conectar().prepareStatement(sql);
             pstm.setString(1, obj.getNome());
             pstm.setString(2, obj.getDisponibilidade());
            
-            incluiuProfessor = pstm.execute();
+            incluiuProfessor = pstm.executeUpdate() > 0 ;
             
             if ( incluiuProfessor && ! obj.getDisciplinas().isEmpty()  ) {
                 String sql2 = "insert into professores_disciplinas ( professor_id, disciplina_id)" ;
@@ -142,48 +142,32 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
 
     @Override
     public List<Professor> listar() {
-    
+        
     List<Professor> professores = new ArrayList<Professor>();
     Professor professor = new Professor();
     
         try {
+
+            String sql = "select * from professores ";
             
-         String sql =  " select * from professores p ";
-                sql += " inner join professores_disciplinas pd ";
-                sql += " on p.professor_id = pd.professor_id ";
-                sql += " inner join disciplinas d ";
-                sql += " on d.disciplina_id = pd.disciplina_id";
-                
             pstm = this.conectar().prepareStatement(sql);
             pstm.execute();
             
             ResultSet rs = pstm.getResultSet();
-            List<Disciplina> disciplinas = new ArrayList<Disciplina>();
             
-            while ( true ){ 
-                    while ( rs.next()){
-
-                        professor.setId(rs.getInt("p.professor_id"));
-                        professor.setNome(rs.getString("p.professor_nome"));
-
-                        Disciplina disciplina = new Disciplina();
-                        disciplina.setId(rs.getInt("d.disciplina_id"));
-                        disciplina.setNome(rs.getString("d.disciplina_nome"));
-                        disciplinas.add(disciplina);
-
-                    }
-                    professor.setDisciplinas(disciplinas);
-                    professores.add(professor);
-                    
-                    if ( ! rs.next() ){
-                        break;
-                    }
+            while ( rs.next() ){
+                professor = new Professor();
+                professor.setId( rs.getInt("professor_id") );
+                professor.setNome( rs.getString("professor_nome")  );
+                professor.setDisponibilidade(rs.getString("professor_disponibilidade")  );
+                professores.add(professor);
             }
+            pstm.close();
+            rs.close();
             
         } catch (SQLException ex) {
             Logger.getLogger(ProfessorDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-          
         return professores;      
     }
 
@@ -192,4 +176,32 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public void incluirDisciplina(int professorId, List<Disciplina> disciplinas){
+        
+        try {
+            String sql = "delete from professores_disciplinas where professor_id = ? ";
+            pstm = this.conectar().prepareStatement(sql);
+            pstm.setInt(1, professorId);
+            pstm.execute();
+            
+            sql = "insert into professores_disciplinas(professor_id, disciplina_id) values ( ?, ? )";
+            PreparedStatement pstm2 = this.conectar().prepareStatement(sql);
+            
+            disciplinas.forEach( (d)-> {
+                try {
+                    pstm2.setInt(1, professorId );
+                    pstm2.setInt(2, d.getId() );
+                    pstm2.execute();
+                    
+                } catch (SQLException ex) {
+                    Logger.getLogger(ProfessorDAO.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ProfessorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+    }
 }
