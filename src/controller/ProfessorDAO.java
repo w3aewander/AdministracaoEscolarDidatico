@@ -8,10 +8,12 @@ package controller;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import model.Disciplina;
 import model.ICRUD;
 import model.Professor;
@@ -24,6 +26,7 @@ import persistence.Conexao;
 public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
 
     private PreparedStatement pstm;
+    private int idGerado ; 
     
     @Override
     public boolean incluir(Professor obj) {
@@ -35,25 +38,19 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
             String sql = "insert into professores (  professor_nome, professor_disponibilidade  ) ";
             sql += " values( ?, ? )";
             
-            pstm = this.conectar().prepareStatement(sql);
+            pstm = this.conectar().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstm.setString(1, obj.getNome());
             pstm.setString(2, obj.getDisponibilidade());
            
             incluiuProfessor = pstm.executeUpdate() > 0 ;
             
-            if ( incluiuProfessor && ! obj.getDisciplinas().isEmpty()  ) {
-                String sql2 = "insert into professores_disciplinas ( professor_id, disciplina_id)" ;
-                sql2 += " values( ?, ? )";
-                
-                pstm = this.conectar().prepareStatement(sql2);
-                
-                for( Disciplina disciplina:obj.getDisciplinas() ){
-                    pstm.setInt(1,obj.getId());
-                    pstm.setInt(2, disciplina.getId());
-                    pstm.execute();
-                }
-            }
+            ResultSet rs = pstm.getGeneratedKeys();
             
+            if ( rs.next()) idGerado = rs.getInt(1);
+            //JOptionPane.showMessageDialog(null, "ID do professor gerado: " + idGerado );
+            
+            incluirDisciplina(idGerado, obj.getDisciplinas());
+                   
             pstm.close();
             
         } catch (SQLException ex) {
@@ -172,36 +169,62 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
     }
 
     @Override
-    public Professor exibir() {
+    public Professor exibir()  {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void incluirDisciplina(int professorId, List<Disciplina> disciplinas){
-        
+    public List<Disciplina> obterDisciplinas(int professorId){
+        List<Disciplina> disciplinas = new ArrayList<Disciplina>();
         try {
-            String sql = "delete from professores_disciplinas where professor_id = ? ";
-            pstm = this.conectar().prepareStatement(sql);
+            String sql = "select * from professores_disciplinas pd ";
+            sql +=  " inner join disciplinas d ";
+            sql +=  " on pd.disciplina_id = d.disciplina_id ";
+            sql +=  " and  professor_id = ? ";
+            
+            PreparedStatement pstm = this.conectar().prepareStatement(sql);
             pstm.setInt(1, professorId);
             pstm.execute();
             
-            sql = "insert into professores_disciplinas(professor_id, disciplina_id) values ( ?, ? )";
-            PreparedStatement pstm2 = this.conectar().prepareStatement(sql);
+            ResultSet rs = pstm.getResultSet();
             
+            while ( rs.next() ){
+                Disciplina disciplina = new Disciplina();
+                disciplina.setId(rs.getInt("disciplina_id"));
+                disciplina.setNome(rs.getString("disciplina_nome"));
+                disciplinas.add(disciplina);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProfessorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        return disciplinas;
+    } 
+            
+    public void incluirDisciplina(int professorId, List<Disciplina> disciplinas) {
+        
+        try {
+            String sql = "delete from professores_disciplinas where professor_id = ? ";
+            PreparedStatement pstm = this.conectar().prepareStatement(sql);
+            
+            pstm.setInt(1, professorId);
+            pstm.execute();
+                
+             sql = "insert into professores_disciplinas(professor_id, disciplina_id) values ( ?, ? )";
+             PreparedStatement pstm2 = this.conectar().prepareStatement(sql);
+        
             disciplinas.forEach( (d)-> {
                 try {
                     pstm2.setInt(1, professorId );
                     pstm2.setInt(2, d.getId() );
                     pstm2.execute();
-                    
                 } catch (SQLException ex) {
                     Logger.getLogger(ProfessorDAO.class.getName()).log(Level.SEVERE, null, ex);
                 }
+               
             });
             
         } catch (SQLException ex) {
             Logger.getLogger(ProfessorDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
+        }          
     }
 }

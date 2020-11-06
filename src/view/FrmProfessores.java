@@ -284,6 +284,11 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
             }
         ));
         tblProfessores.setName("tblProfessores"); // NOI18N
+        tblProfessores.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblProfessoresMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tblProfessores);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -329,19 +334,18 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
           
         if ( txtId.getText().equals("0")){
             
-          Disciplina disciplina = new Disciplina();
-          
           DefaultListModel dlm =  (DefaultListModel) lstDisciplinas.getModel();
           int qtdeDisciplinas = dlm.getSize();
-          
+        
           for(int i=0;i < qtdeDisciplinas; i++){
+               Disciplina disciplina = new Disciplina();
               //pega as linha da lista de disciplinas
-              String  linha = dlm.getElementAt(i).toString();
+              Object  linha =  dlm.getElementAt(i);
               
               //Divide a linha usando o delimitador "-" para
               //obter o id e nome da disciplina
-              String id = linha.split("-")[0] ;
-              String nome = linha.split("-")[1];
+              String id = linha.toString().split("-")[0] ;
+              String nome = linha.toString().split("-")[1];
               
               //setar o id e nome para criar o objeto disciplina
               disciplina.setId( Integer.parseInt(id) );
@@ -351,11 +355,15 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
               disciplinas.add(disciplina);
              
           }  
+          
           professor.setNome(txtNome.getText());
+          professor.setDisponibilidade( txtDisponibilidade.getText() );
+          professor.setDisciplinas(disciplinas);
+          
           
           
           if ( new ProfessorDAO().incluir(professor) ){
-               new ProfessorDAO().incluirDisciplina(professor.getId(), disciplinas);
+                   
               JOptionPane.showMessageDialog(null,"Professor incluido com sucesso");
           } else {
                JOptionPane.showMessageDialog(null,"Erro ao tentar incluir o professor.");
@@ -380,6 +388,29 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
  
        //dlm.Element( cboDisciplinas.getModel().getSelectedItem().toString()) ;        
     }//GEN-LAST:event_btnRemoverDisciplinaActionPerformed
+
+    private void editarProfessor(){
+        int row = tblProfessores.getSelectedRow();
+        
+        String id = tblProfessores.getValueAt(row, 0).toString();
+        String nome = tblProfessores.getValueAt(row, 1).toString();
+        
+        txtId.setText(id);
+        txtNome.setText(nome);
+        
+        DefaultListModel dlm = new DefaultListModel();
+        new ProfessorDAO().obterDisciplinas( Integer.parseInt(id) ).forEach( (p) -> {
+            dlm.addElement( p.getId()+"-"+p.getNome() );
+        });
+        
+        lstDisciplinas.setModel(dlm);
+        
+    }
+    
+    private void tblProfessoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProfessoresMouseClicked
+        // TODO add your handling code here:
+        editarProfessor();
+    }//GEN-LAST:event_tblProfessoresMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
