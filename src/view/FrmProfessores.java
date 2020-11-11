@@ -7,6 +7,7 @@ package view;
 
 import controller.DisciplinaDAO;
 import controller.ProfessorDAO;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -175,6 +176,11 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
         });
 
         btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
         btnPesquisar.setText("Pesquisar");
 
@@ -331,14 +337,18 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
-        List<Disciplina> disciplinas = new ArrayList<Disciplina>();
-        Professor professor = new Professor();
+        List<Disciplina> disciplinas = null;
+        
+        ;
 
         if (txtId.getText().equals("0")) {
-
+           disciplinas = new ArrayList<Disciplina>(); 
+           Professor professor = new Professor();
+       
             DefaultListModel dlm = (DefaultListModel) lstDisciplinas.getModel();
             int qtdeDisciplinas = dlm.getSize();
 
+            
             for (int i = 0; i < qtdeDisciplinas; i++) {
                 Disciplina disciplina = new Disciplina();
                 //pega as linha da lista de disciplinas
@@ -358,10 +368,13 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
 
             }
 
+            
             professor.setNome(txtNome.getText());
             professor.setDisponibilidade(txtDisponibilidade.getText());
             professor.setDisciplinas(disciplinas);
-
+          
+             
+            
             if (new ProfessorDAO().incluir(professor)) {
 
                 JOptionPane.showMessageDialog(null, "Professor incluido com sucesso");
@@ -370,10 +383,18 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
             }
 
         } else {
+                
+            disciplinas = new ArrayList<Disciplina>(); 
+            Professor professor = new Professor();
+            
+            
             DefaultListModel dlm = (DefaultListModel) lstDisciplinas.getModel();
+            
             int qtdeDisciplinas = dlm.getSize();
 
             for (int i = 0; i < qtdeDisciplinas; i++) {
+                
+           
                 Disciplina disciplina = new Disciplina();
                 //pega as linha da lista de disciplinas
                 Object linha = dlm.getElementAt(i);
@@ -391,13 +412,13 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
                 disciplinas.add(disciplina);
 
             }
-
             professor.setId( Integer.parseInt(txtId.getText() ));
             professor.setNome(txtNome.getText()); 
             professor.setDisponibilidade(txtDisponibilidade.getText());
             professor.setDisciplinas(disciplinas);
 
             if (new ProfessorDAO().atualizar(professor)) {
+ 
 
                 JOptionPane.showMessageDialog(null, "Professor atualizado com sucesso");
             } else {
@@ -444,6 +465,28 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
         editarProfessor();
     }//GEN-LAST:event_tblProfessoresMouseClicked
 
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        // TODO add your handling code here:
+    
+        Professor professor = new Professor();
+        int id = Integer.parseInt(txtId.getText());
+        professor.setId( id  );
+        
+        if ( lstDisciplinas.getModel().getSize() > 0 ){
+            new ProfessorDAO().excluirDisciplinas( professor.getId() );
+        }
+         
+        if ( new ProfessorDAO().excluir( professor.getId() ) ) {
+            JOptionPane.showMessageDialog(null, "Dados do professor excluídos com sucesso.");
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro ao tentar excluir dados do professor.");
+            
+        }
+
+        popularProfessores();
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExcluir;

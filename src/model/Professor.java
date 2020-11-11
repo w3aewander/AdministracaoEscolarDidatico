@@ -50,4 +50,11 @@ public class Professor {
     public void setDisponibilidade(String disponibilidade) {
         this.disponibilidade = disponibilidade;
     }
+
+    @Override
+    public String toString() {
+        return "Professor{" + "id=" + id + ", nome=" + nome + ", disponibilidade=" + disponibilidade + ", disciplinas=" + disciplinas + '}';
+    }
+    
+    
 }
