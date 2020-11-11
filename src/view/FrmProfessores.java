@@ -32,50 +32,52 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
         limparListaDisciplinas();
     }
 
-    private void limparListaDisciplinas(){
+    private void limparListaDisciplinas() {
         DefaultListModel dlm = new DefaultListModel();
         dlm.clear();
         lstDisciplinas.setModel(dlm);
     }
-    private void popularDisciplinas(){
+
+    private void popularDisciplinas() {
         DefaultComboBoxModel dcm = (DefaultComboBoxModel) cboDisciplinas.getModel();
-        
+
         dcm.removeAllElements();
-        
+
         //DisciplinaDAO disciplinaDAO = new DisciplinaDAO();
-        new DisciplinaDAO().listar().forEach( (d)-> {
-              String id = String.valueOf( d.getId());
-              String nome =  d.getNome() ;
-              
-              dcm.addElement( id+"-"+nome   );
+        new DisciplinaDAO().listar().forEach((d) -> {
+            String id = String.valueOf(d.getId());
+            String nome = d.getNome();
+
+            dcm.addElement(id + "-" + nome);
         });
-        
+
     }
-    private void popularProfessores(){
+
+    private void popularProfessores() {
         ProfessorDAO professorDAO = new ProfessorDAO();
         //Cria um modelo de dados para a tabela professores
         DefaultTableModel dtm = new DefaultTableModel();
         dtm.setColumnCount(0); //apaga as colunas
         dtm.setNumRows(0); //apaga as linhas 
-        
+
         //configura o cabeçalho das colunas da tabela.
-        String[] colunas = {"ID", "NOME" };
+        String[] colunas = {"ID", "NOME"};
         dtm.setColumnIdentifiers(colunas);
-        
+
         //pega a lista de professoeres
         //para popular a tabela professores
-        professorDAO.listar().forEach( (p) -> {
-            
-           String id = String.valueOf(p.getId());
-           String nome = p.getNome();
-           
-           String[] linha = {  id, nome  };
-           dtm.addRow(linha);
-           
-        });        
+        professorDAO.listar().forEach((p) -> {
+
+            String id = String.valueOf(p.getId());
+            String nome = p.getNome();
+
+            String[] linha = {id, nome};
+            dtm.addRow(linha);
+
+        });
         tblProfessores.setModel(dtm);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -315,11 +317,11 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
         // TODO add your handling code here:
-        txtId.setText("0"); 
+        txtId.setText("0");
         txtNome.setText("");
-        
+
         limparListaDisciplinas();
-        
+
         txtDisponibilidade.setText("");
     }//GEN-LAST:event_btnNovoActionPerformed
 
@@ -328,56 +330,86 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_lstDisciplinasFocusGained
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        
+
         List<Disciplina> disciplinas = new ArrayList<Disciplina>();
         Professor professor = new Professor();
-          
-        if ( txtId.getText().equals("0")){
-            
-          DefaultListModel dlm =  (DefaultListModel) lstDisciplinas.getModel();
-          int qtdeDisciplinas = dlm.getSize();
-        
-          for(int i=0;i < qtdeDisciplinas; i++){
-               Disciplina disciplina = new Disciplina();
-              //pega as linha da lista de disciplinas
-              Object  linha =  dlm.getElementAt(i);
-              
-              //Divide a linha usando o delimitador "-" para
-              //obter o id e nome da disciplina
-              String id = linha.toString().split("-")[0] ;
-              String nome = linha.toString().split("-")[1];
-              
-              //setar o id e nome para criar o objeto disciplina
-              disciplina.setId( Integer.parseInt(id) );
-              disciplina.setNome(nome);
-              
-              //incluir a disciplina na lista
-              disciplinas.add(disciplina);
-             
-          }  
-          
-          professor.setNome(txtNome.getText());
-          professor.setDisponibilidade( txtDisponibilidade.getText() );
-          professor.setDisciplinas(disciplinas);
-          
-          
-          
-          if ( new ProfessorDAO().incluir(professor) ){
-                   
-              JOptionPane.showMessageDialog(null,"Professor incluido com sucesso");
-          } else {
-               JOptionPane.showMessageDialog(null,"Erro ao tentar incluir o professor.");
-          }
-        
-        }else{
-            //atualizar
+
+        if (txtId.getText().equals("0")) {
+
+            DefaultListModel dlm = (DefaultListModel) lstDisciplinas.getModel();
+            int qtdeDisciplinas = dlm.getSize();
+
+            for (int i = 0; i < qtdeDisciplinas; i++) {
+                Disciplina disciplina = new Disciplina();
+                //pega as linha da lista de disciplinas
+                Object linha = dlm.getElementAt(i);
+
+                //Divide a linha usando o delimitador "-" para
+                //obter o id e nome da disciplina
+                String id = linha.toString().split("-")[0];
+                String nome = linha.toString().split("-")[1];
+
+                //setar o id e nome para criar o objeto disciplina
+                disciplina.setId(Integer.parseInt(id));
+                disciplina.setNome(nome);
+
+                //incluir a disciplina na lista
+                disciplinas.add(disciplina);
+
+            }
+
+            professor.setNome(txtNome.getText());
+            professor.setDisponibilidade(txtDisponibilidade.getText());
+            professor.setDisciplinas(disciplinas);
+
+            if (new ProfessorDAO().incluir(professor)) {
+
+                JOptionPane.showMessageDialog(null, "Professor incluido com sucesso");
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao tentar incluir o professor.");
+            }
+
+        } else {
+            DefaultListModel dlm = (DefaultListModel) lstDisciplinas.getModel();
+            int qtdeDisciplinas = dlm.getSize();
+
+            for (int i = 0; i < qtdeDisciplinas; i++) {
+                Disciplina disciplina = new Disciplina();
+                //pega as linha da lista de disciplinas
+                Object linha = dlm.getElementAt(i);
+
+                //Divide a linha usando o delimitador "-" para
+                //obter o id e nome da disciplina
+                String id = linha.toString().split("-")[0];
+                String nome = linha.toString().split("-")[1];
+
+                //setar o id e nome para criar o objeto disciplina
+                disciplina.setId(Integer.parseInt(id));
+                disciplina.setNome(nome);
+
+                //incluir a disciplina na lista
+                disciplinas.add(disciplina);
+
+            }
+
+            professor.setId( Integer.parseInt(txtId.getText() ));
+            professor.setNome(txtNome.getText()); 
+            professor.setDisponibilidade(txtDisponibilidade.getText());
+            professor.setDisciplinas(disciplinas);
+
+            if (new ProfessorDAO().atualizar(professor)) {
+
+                JOptionPane.showMessageDialog(null, "Professor atualizado com sucesso");
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao tentar atualizar o professor.");
+            }
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnIncluirDisciplinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIncluirDisciplinaActionPerformed
         // TODO add your handling code here:
         DefaultListModel dlm = (DefaultListModel) lstDisciplinas.getModel();
-        dlm.addElement( cboDisciplinas.getModel().getSelectedItem().toString()) ;
+        dlm.addElement(cboDisciplinas.getModel().getSelectedItem().toString());
     }//GEN-LAST:event_btnIncluirDisciplinaActionPerformed
 
     private void btnRemoverDisciplinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverDisciplinaActionPerformed
@@ -385,28 +417,28 @@ public class FrmProfessores extends javax.swing.JInternalFrame {
         DefaultListModel dlm = (DefaultListModel) lstDisciplinas.getModel();
         int indice = lstDisciplinas.getSelectedIndex();
         dlm.remove(indice);
- 
-       //dlm.Element( cboDisciplinas.getModel().getSelectedItem().toString()) ;        
+
+        //dlm.Element( cboDisciplinas.getModel().getSelectedItem().toString()) ;        
     }//GEN-LAST:event_btnRemoverDisciplinaActionPerformed
 
-    private void editarProfessor(){
+    private void editarProfessor() {
         int row = tblProfessores.getSelectedRow();
-        
+
         String id = tblProfessores.getValueAt(row, 0).toString();
         String nome = tblProfessores.getValueAt(row, 1).toString();
-        
+
         txtId.setText(id);
         txtNome.setText(nome);
-        
+
         DefaultListModel dlm = new DefaultListModel();
-        new ProfessorDAO().obterDisciplinas( Integer.parseInt(id) ).forEach( (p) -> {
-            dlm.addElement( p.getId()+"-"+p.getNome() );
+        new ProfessorDAO().obterDisciplinas(Integer.parseInt(id)).forEach((p) -> {
+            dlm.addElement(p.getId() + "-" + p.getNome());
         });
-        
+
         lstDisciplinas.setModel(dlm);
-        
+
     }
-    
+
     private void tblProfessoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProfessoresMouseClicked
         // TODO add your handling code here:
         editarProfessor();

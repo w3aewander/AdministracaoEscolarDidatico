@@ -108,7 +108,9 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
         
         try {
             
-            String sql = "update professores set professor_nome = ?, professor_disponibilidade, where professor_id = ?";
+            String sql = " update professores set professor_nome = ?,"
+                    +    " professor_disponibilidade = ? "
+                    +    " where professor_id = ? ";
             pstm = this.conectar().prepareStatement(sql);
             pstm.setString(1, obj.getNome());
             pstm.setString(2, obj.getDisponibilidade());
@@ -144,7 +146,6 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
     Professor professor = new Professor();
     
         try {
-
             String sql = "select * from professores ";
             
             pstm = this.conectar().prepareStatement(sql);
@@ -170,7 +171,7 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
 
     @Override
     public Professor exibir()  {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+      return null;
     }
     
     public List<Disciplina> obterDisciplinas(int professorId){
@@ -209,7 +210,8 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
             pstm.setInt(1, professorId);
             pstm.execute();
                 
-             sql = "insert into professores_disciplinas(professor_id, disciplina_id) values ( ?, ? )";
+             sql = " insert into professores_disciplinas(professor_id, disciplina_id)"
+                 + " values ( ?, ? )";
              PreparedStatement pstm2 = this.conectar().prepareStatement(sql);
         
             disciplinas.forEach( (d)-> {
@@ -219,8 +221,7 @@ public class ProfessorDAO extends Conexao implements ICRUD<Professor> {
                     pstm2.execute();
                 } catch (SQLException ex) {
                     Logger.getLogger(ProfessorDAO.class.getName()).log(Level.SEVERE, null, ex);
-                }
-               
+                }          
             });
             
         } catch (SQLException ex) {
